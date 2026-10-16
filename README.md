@@ -1,22 +1,18 @@
-# Rescate del Día — inventario + ofertas (prototipo)
+# Rescate del Día — inventario + catálogo piloto
 
-PWA de prueba para que un comercio registre sus productos y use existencias para crear ofertas de excedentes en Atlacomulco.
+PWA para que un comercio controle existencias y, si lo desea, envíe productos seleccionados al catálogo público CercaCerca.
 
 ## Incluye
-- Sección de ofertas con búsqueda y filtros.
-- Inventario con alta y baja de productos, existencia inicial, umbral mínimo y vencimiento.
-- Calculadora por producto: costo, ganancia editable e IVA configurable; muestra ganancia bruta, IVA y precio sugerido. Permite comparar con una referencia local ingresada manualmente.
-- Perfiles separados por negocio: selector de inventario, movimientos, ofertas y ajustes independientes de zona, ganancia e IVA. Los perfiles se sincronizan con la cuenta.
-- Movimientos de entrada, salida/venta y conteo físico.
-- Alertas de bajo stock y productos vencidos o por vencer.
-- Ofertas ligadas al inventario. Las reservas simuladas descuentan la existencia de la oferta y del producto; las unidades comprometidas no se pueden volver a ofrecer ni retirar por error.
-- Cancelar una oferta libera su asignación; un producto con ofertas activas no se puede borrar.
-- Exportar respaldo JSON, eliminar productos sin ofertas activas y reiniciar los datos locales con confirmación.
-- Inicio de sesión y creación de cuenta con Supabase Auth; el acceso al inventario requiere cuenta.
-- Sincronización privada entre dispositivos para perfiles de negocio, inventario, movimientos, ofertas y reservas de la cuenta autenticada, protegida con políticas RLS.
+- Inventario privado por negocio, movimientos de entrada, salida/venta y conteo físico.
+- Perfiles separados, sincronización privada con Supabase Auth y RLS.
+- Calculadora de precio, margen, IVA y referencia local.
+- Publicación individual y opcional al catálogo CercaCerca, con consentimiento explícito de los datos públicos. Cada solicitud queda pendiente; la aprobación solo la puede realizar administración.
+- WhatsApp configurable por negocio y vacío por defecto.
+- Al cambiar existencias, el catálogo se actualiza con el saldo menos unidades comprometidas por ofertas activas; una existencia pública de cero deja de mostrarse.
+- Retirar del catálogo no borra el producto del inventario privado.
 
-## Límites de esta demo
-Los negocios y ofertas de ejemplo son ficticios; no se muestran como comercios participantes. Los datos de la cuenta autenticada se guardan en Supabase bajo RLS y también quedan en el dispositivo. Usa la misma cuenta en cada equipo; si dos dispositivos editan a la vez, la app puede pausar la sincronización y pedir resolver el conflicto. El precio sugerido se calcula desde costo, ganancia elegida e IVA; la referencia local se captura manualmente y no es un promedio de mercado. El cálculo no incluye otros gastos ni IVA acreditable; confirma la tasa aplicable con tu contador. El respaldo actual solo se exporta; todavía no se puede restaurar desde la app. No hay notificación a comercios, ventas reales, pagos ni cobros de comisión. Mantén respaldos y no publiques ofertas reales sin revisión y consentimiento.
+## Flujo piloto
+La persona interesada contacta por WhatsApp. El comercio confirma manualmente la disponibilidad y, si vende, registra «Salida / venta» en Rescate del Día. No se procesan pedidos, pagos, checkout ni apartados automáticos. Las ofertas/reservas de demostración son independientes de la compra por catálogo.
 
-## Modelo posible
-Comenzar con un grupo pequeño de comercios; probar el control de stock y la recolección en local. Más adelante, evaluar una suscripción económica por inventario y/o una comisión transparente por oferta recogida. No se garantiza ingreso hasta validar que los comercios y clientes la usan.
+## Configuración
+Ambas apps comparten el proyecto Supabase. Antes de probar la publicación, instala una vez `cercacerca-app/supabase/catalog-products.sql` y confirma que `catalog_products` esté disponible. Mantén las reglas RLS de `rescate_state` intactas y nunca uses una clave `service_role` en el navegador.

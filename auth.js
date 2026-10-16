@@ -45,6 +45,7 @@
     if (typeof window.renderOffers === 'function') window.renderOffers();
     if (typeof window.renderInventory === 'function') window.renderInventory();
     if (typeof window.renderSettings === 'function') window.renderSettings();
+    if (typeof window.refreshCatalogStatuses === 'function') window.refreshCatalogStatuses();
   }
 
   function syncUI() {
@@ -77,7 +78,7 @@
     const source = value && typeof value === 'object' && !Array.isArray(value) ? value : {};
     const raw = source.settings && typeof source.settings === 'object' && !Array.isArray(source.settings) ? source.settings : {};
     const margin = Number(raw.defaultMarginPercent), tax = Number(raw.defaultTaxRate);
-    const businesses = Array.isArray(source.businesses) ? source.businesses.filter(b => b && typeof b === 'object' && !Array.isArray(b)).map(b => { const m = Number(b.defaultMarginPercent), t = Number(b.defaultTaxRate); return { id: String(b.id || '').slice(0,80), name: String(b.name || 'Mi negocio').slice(0,45), zone: String(b.zone || 'Atlacomulco').slice(0,60), defaultMarginPercent: Number.isFinite(m) && m >= 0 && m <= 500 ? m : 30, defaultTaxRate: Number.isFinite(t) && t >= 0 && t <= 16 ? t : 16 }; }) : [];
+    const businesses = Array.isArray(source.businesses) ? source.businesses.filter(b => b && typeof b === 'object' && !Array.isArray(b)).map(b => { const m = Number(b.defaultMarginPercent), t = Number(b.defaultTaxRate); return { id: String(b.id || '').slice(0,80), name: String(b.name || 'Mi negocio').slice(0,45), zone: String(b.zone || 'Atlacomulco').slice(0,60), defaultMarginPercent: Number.isFinite(m) && m >= 0 && m <= 500 ? m : 30, defaultTaxRate: Number.isFinite(t) && t >= 0 && t <= 16 ? t : 16, whatsapp: String(b.whatsapp || '').slice(0,22) }; }) : [];
     return {
       inventory: Array.isArray(source.inventory) ? source.inventory : [],
       offers: Array.isArray(source.offers) ? source.offers : [],
