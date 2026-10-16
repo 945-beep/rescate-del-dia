@@ -50,7 +50,7 @@
   function syncUI() {
     if (authButton) authButton.textContent = state.user ? 'Cerrar sesión' : 'Iniciar sesión';
     const stockTab = $('#stockTab');
-    if (stockTab) stockTab.textContent = state.user ? 'Mi inventario' : 'Inventario del negocio';
+    if (stockTab) stockTab.textContent = state.user ? 'Mis negocios' : 'Inventario del negocio';
     const account = $('#settingsAccount');
     if (account) account.textContent = state.user ? (state.user.email || 'Cuenta activa') : 'Inicia sesión';
   }
@@ -72,18 +72,21 @@
   }
 
   function localKey(userId) { return `rescate-state-v2-user-${userId}`; }
-  function emptyState() { return { inventory: [], offers: [], reservations: [], movements: [], demoStock: {}, settings: { businessName: '', zone: 'Atlacomulco', defaultMarginPercent: 30, defaultTaxRate: 16 } }; }
+  function emptyState() { return { inventory: [], offers: [], reservations: [], movements: [], demoStock: {}, settings: { businessName: '', zone: 'Atlacomulco', defaultMarginPercent: 30, defaultTaxRate: 16 }, businesses: [], activeBusinessId: '' }; }
   function normalizePayload(value) {
     const source = value && typeof value === 'object' && !Array.isArray(value) ? value : {};
     const raw = source.settings && typeof source.settings === 'object' && !Array.isArray(source.settings) ? source.settings : {};
     const margin = Number(raw.defaultMarginPercent), tax = Number(raw.defaultTaxRate);
+    const businesses = Array.isArray(source.businesses) ? source.businesses.filter(b => b && typeof b === 'object' && !Array.isArray(b)).map(b => { const m = Number(b.defaultMarginPercent), t = Number(b.defaultTaxRate); return { id: String(b.id || '').slice(0,80), name: String(b.name || 'Mi negocio').slice(0,45), zone: String(b.zone || 'Atlacomulco').slice(0,60), defaultMarginPercent: Number.isFinite(m) && m >= 0 && m <= 500 ? m : 30, defaultTaxRate: Number.isFinite(t) && t >= 0 && t <= 16 ? t : 16 }; }) : [];
     return {
       inventory: Array.isArray(source.inventory) ? source.inventory : [],
       offers: Array.isArray(source.offers) ? source.offers : [],
       reservations: Array.isArray(source.reservations) ? source.reservations : [],
       movements: Array.isArray(source.movements) ? source.movements : [],
       demoStock: source.demoStock && typeof source.demoStock === 'object' && !Array.isArray(source.demoStock) ? source.demoStock : {},
-      settings: { businessName: String(raw.businessName || '').slice(0,45), zone: String(raw.zone || 'Atlacomulco').slice(0,60) || 'Atlacomulco', defaultMarginPercent: Number.isFinite(margin) && margin >= 0 && margin <= 500 ? margin : 30, defaultTaxRate: Number.isFinite(tax) && tax >= 0 && tax <= 16 ? tax : 16 }
+      settings: { businessName: String(raw.businessName || '').slice(0,45), zone: String(raw.zone || 'Atlacomulco').slice(0,60) || 'Atlacomulco', defaultMarginPercent: Number.isFinite(margin) && margin >= 0 && margin <= 500 ? margin : 30, defaultTaxRate: Number.isFinite(tax) && tax >= 0 && tax <= 16 ? tax : 16 },
+      businesses,
+      activeBusinessId: String(source.activeBusinessId || '').slice(0,80)
     };
   }
   function readLocal(key) {
@@ -92,7 +95,7 @@
   }
   function hasData(value) {
     const payload = normalizePayload(value);
-    return payload.inventory.length > 0 || payload.offers.length > 0 || payload.reservations.length > 0 || payload.movements.length > 0 || Object.keys(payload.demoStock).length > 0 || Boolean(payload.settings.businessName) || payload.settings.zone !== 'Atlacomulco' || payload.settings.defaultMarginPercent !== 30 || payload.settings.defaultTaxRate !== 16;
+    return payload.inventory.length > 0 || payload.offers.length > 0 || payload.reservations.length > 0 || payload.movements.length > 0 || Object.keys(payload.demoStock).length > 0 || payload.businesses.length > 0 || Boolean(payload.settings.businessName) || payload.settings.zone !== 'Atlacomulco' || payload.settings.defaultMarginPercent !== 30 || payload.settings.defaultTaxRate !== 16;
   }
   function samePayload(a, b) { return JSON.stringify(normalizePayload(a)) === JSON.stringify(normalizePayload(b)); }
   function writeLocal(key, value) {
