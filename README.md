@@ -11,9 +11,10 @@ PWA de prueba para que un comercio registre sus productos y use existencias para
 - Cancelar una oferta libera su asignación; un producto con ofertas activas no se puede borrar.
 - Exportar respaldo JSON, eliminar productos sin ofertas activas y reiniciar los datos locales con confirmación.
 - Inicio de sesión y creación de cuenta con Supabase Auth; el acceso al inventario requiere cuenta.
+- Sincronización privada entre dispositivos para inventario, movimientos, ofertas y reservas de la cuenta autenticada, protegida con políticas RLS.
 
 ## Límites de esta demo
-Los comercios, ofertas y precios precargados son ficticios. Hay inicio de sesión, pero inventario, movimientos, ofertas propias y reservas siguen guardándose solo en ese navegador y se separan por cuenta; todavía no se sincronizan entre dispositivos ni existe una base compartida para esos datos. No hay notificación a comercios, ventas reales, pagos ni cobros de comisión. No uses datos reales hasta completar y probar la sincronización segura y el respaldo.
+Los negocios, ofertas y precios precargados son ficticios; no se muestran como comercios participantes. Los datos de la cuenta autenticada se guardan en Supabase bajo RLS y también quedan en el dispositivo. Usa la misma cuenta en cada equipo; si dos dispositivos editan a la vez, la app puede pausar la sincronización y pedir resolver el conflicto. No hay notificación a comercios, ventas reales, pagos ni cobros de comisión. Mantén respaldos y no publiques ofertas reales sin revisión y consentimiento.
 
 ## Modelo posible
 Comenzar con un grupo pequeño de comercios; probar el control de stock y la recolección en local. Más adelante, evaluar una suscripción económica por inventario y/o una comisión transparente por oferta recogida. No se garantiza ingreso hasta validar que los comercios y clientes la usan.
