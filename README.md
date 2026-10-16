@@ -16,3 +16,7 @@ La persona interesada contacta por WhatsApp. El comercio confirma manualmente la
 
 ## Configuración
 Ambas apps comparten el proyecto Supabase. Antes de probar la publicación, instala una vez `cercacerca-app/supabase/catalog-products.sql` y confirma que `catalog_products` esté disponible. Mantén las reglas RLS de `rescate_state` intactas y nunca uses una clave `service_role` en el navegador.
+
+
+## Catálogo CercaCerca
+La venta de productos se activa por negocio y está desactivada por defecto. Los perfiles de servicios, incluido Autolavado, no pueden publicar productos. Aun con la designación activada, cada producto requiere consentimiento explícito y aprobación administrativa.

@@ -72,13 +72,14 @@
     return 'No se pudo completar. Revisa los datos y tu conexión, e inténtalo de nuevo.';
   }
 
+  function isServiceOnlyBusinessName(name) { return String(name || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().includes('autolavado'); }
   function localKey(userId) { return `rescate-state-v2-user-${userId}`; }
   function emptyState() { return { inventory: [], offers: [], reservations: [], movements: [], demoStock: {}, settings: { businessName: '', zone: 'Atlacomulco', defaultMarginPercent: 30, defaultTaxRate: 16 }, businesses: [], activeBusinessId: '' }; }
   function normalizePayload(value) {
     const source = value && typeof value === 'object' && !Array.isArray(value) ? value : {};
     const raw = source.settings && typeof source.settings === 'object' && !Array.isArray(source.settings) ? source.settings : {};
     const margin = Number(raw.defaultMarginPercent), tax = Number(raw.defaultTaxRate);
-    const businesses = Array.isArray(source.businesses) ? source.businesses.filter(b => b && typeof b === 'object' && !Array.isArray(b)).map(b => { const m = Number(b.defaultMarginPercent), t = Number(b.defaultTaxRate); return { id: String(b.id || '').slice(0,80), name: String(b.name || 'Mi negocio').slice(0,45), zone: String(b.zone || 'Atlacomulco').slice(0,60), defaultMarginPercent: Number.isFinite(m) && m >= 0 && m <= 500 ? m : 30, defaultTaxRate: Number.isFinite(t) && t >= 0 && t <= 16 ? t : 16, whatsapp: String(b.whatsapp || '').slice(0,22) }; }) : [];
+    const businesses = Array.isArray(source.businesses) ? source.businesses.filter(b => b && typeof b === 'object' && !Array.isArray(b)).map(b => { const m = Number(b.defaultMarginPercent), t = Number(b.defaultTaxRate); return { id: String(b.id || '').slice(0,80), name: String(b.name || 'Mi negocio').slice(0,45), zone: String(b.zone || 'Atlacomulco').slice(0,60), defaultMarginPercent: Number.isFinite(m) && m >= 0 && m <= 500 ? m : 30, defaultTaxRate: Number.isFinite(t) && t >= 0 && t <= 16 ? t : 16, whatsapp: String(b.whatsapp || '').slice(0,22), productSeller: b.productSeller === true && !isServiceOnlyBusinessName(b.name) && b.catalogRole !== 'service-only', catalogRole: isServiceOnlyBusinessName(b.name) || b.catalogRole === 'service-only' ? 'service-only' : 'general' }; }) : [];
     return {
       inventory: Array.isArray(source.inventory) ? source.inventory : [],
       offers: Array.isArray(source.offers) ? source.offers : [],
