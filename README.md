@@ -6,6 +6,7 @@ PWA de prueba para que un comercio registre sus productos y use existencias para
 - Sección de ofertas con búsqueda y filtros.
 - Inventario con alta y baja de productos, existencia inicial, umbral mínimo y vencimiento.
 - Calculadora por producto: costo, ganancia editable e IVA configurable; muestra ganancia bruta, IVA y precio sugerido. Permite comparar con una referencia local ingresada manualmente.
+- Menú de ajustes sincronizado por cuenta: negocio y zona predeterminados, ganancia e IVA por defecto; se pueden cambiar en cada producto.
 - Movimientos de entrada, salida/venta y conteo físico.
 - Alertas de bajo stock y productos vencidos o por vencer.
 - Ofertas ligadas al inventario. Las reservas simuladas descuentan la existencia de la oferta y del producto; las unidades comprometidas no se pueden volver a ofrecer ni retirar por error.

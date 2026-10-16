@@ -40,16 +40,19 @@
   }
 
   function refreshApp() {
-    const stockView = $('#stockView');
-    if (!state.user && stockView && !stockView.hidden && typeof window.switchView === 'function') window.switchView('market');
+    const stockView = $('#stockView'), settingsView = $('#settingsView');
+    if (!state.user && ((stockView && !stockView.hidden) || (settingsView && !settingsView.hidden)) && typeof window.switchView === 'function') window.switchView('market');
     if (typeof window.renderOffers === 'function') window.renderOffers();
     if (typeof window.renderInventory === 'function') window.renderInventory();
+    if (typeof window.renderSettings === 'function') window.renderSettings();
   }
 
   function syncUI() {
     if (authButton) authButton.textContent = state.user ? 'Cerrar sesión' : 'Iniciar sesión';
     const stockTab = $('#stockTab');
     if (stockTab) stockTab.textContent = state.user ? 'Mi inventario' : 'Inventario del negocio';
+    const account = $('#settingsAccount');
+    if (account) account.textContent = state.user ? (state.user.email || 'Cuenta activa') : 'Inicia sesión';
   }
 
   function showDialog() {
@@ -69,15 +72,18 @@
   }
 
   function localKey(userId) { return `rescate-state-v2-user-${userId}`; }
-  function emptyState() { return { inventory: [], offers: [], reservations: [], movements: [], demoStock: {} }; }
+  function emptyState() { return { inventory: [], offers: [], reservations: [], movements: [], demoStock: {}, settings: { businessName: '', zone: 'Atlacomulco', defaultMarginPercent: 30, defaultTaxRate: 16 } }; }
   function normalizePayload(value) {
     const source = value && typeof value === 'object' && !Array.isArray(value) ? value : {};
+    const raw = source.settings && typeof source.settings === 'object' && !Array.isArray(source.settings) ? source.settings : {};
+    const margin = Number(raw.defaultMarginPercent), tax = Number(raw.defaultTaxRate);
     return {
       inventory: Array.isArray(source.inventory) ? source.inventory : [],
       offers: Array.isArray(source.offers) ? source.offers : [],
       reservations: Array.isArray(source.reservations) ? source.reservations : [],
       movements: Array.isArray(source.movements) ? source.movements : [],
-      demoStock: source.demoStock && typeof source.demoStock === 'object' && !Array.isArray(source.demoStock) ? source.demoStock : {}
+      demoStock: source.demoStock && typeof source.demoStock === 'object' && !Array.isArray(source.demoStock) ? source.demoStock : {},
+      settings: { businessName: String(raw.businessName || '').slice(0,45), zone: String(raw.zone || 'Atlacomulco').slice(0,60) || 'Atlacomulco', defaultMarginPercent: Number.isFinite(margin) && margin >= 0 && margin <= 500 ? margin : 30, defaultTaxRate: Number.isFinite(tax) && tax >= 0 && tax <= 16 ? tax : 16 }
     };
   }
   function readLocal(key) {
@@ -86,7 +92,7 @@
   }
   function hasData(value) {
     const payload = normalizePayload(value);
-    return payload.inventory.length > 0 || payload.offers.length > 0 || payload.reservations.length > 0 || payload.movements.length > 0 || Object.keys(payload.demoStock).length > 0;
+    return payload.inventory.length > 0 || payload.offers.length > 0 || payload.reservations.length > 0 || payload.movements.length > 0 || Object.keys(payload.demoStock).length > 0 || Boolean(payload.settings.businessName) || payload.settings.zone !== 'Atlacomulco' || payload.settings.defaultMarginPercent !== 30 || payload.settings.defaultTaxRate !== 16;
   }
   function samePayload(a, b) { return JSON.stringify(normalizePayload(a)) === JSON.stringify(normalizePayload(b)); }
   function writeLocal(key, value) {
