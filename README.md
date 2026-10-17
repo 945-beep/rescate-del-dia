@@ -6,7 +6,7 @@ PWA para que un comercio controle existencias y, si lo desea, envíe productos s
 - Inventario privado por negocio, movimientos de entrada, salida/venta y conteo físico.
 - Perfiles separados, sincronización privada con Supabase Auth y RLS.
 - Calculadora de precio, margen, IVA y referencia local.
-- Publicación individual y opcional al catálogo CercaCerca, con consentimiento explícito de los datos públicos. Cada solicitud queda pendiente; la aprobación solo la puede realizar administración.
+- Publicación individual y opcional al catálogo CercaCerca, con consentimiento por producto. Un bot aprueba automáticamente solo categorías admitidas que cumplan validaciones; los casos dudosos quedan pendientes para administración.
 - WhatsApp configurable por negocio y vacío por defecto.
 - Al cambiar existencias, el catálogo se actualiza con el saldo menos unidades comprometidas por ofertas activas; una existencia pública de cero deja de mostrarse.
 - Retirar del catálogo no borra el producto del inventario privado.
